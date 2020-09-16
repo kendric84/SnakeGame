@@ -1,13 +1,15 @@
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 const GRID_SIZE = 20;
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 600;
 let snakeStartX = 500;
 const SNAKE_START_Y = 280;
-const SNAKE_START_SEGMENTS = 5;
+const SNAKE_START_SEGMENTS = 10;
 let snakeBody = [];
 let snakeDirection = "";
 let snakeMoving = false;
-let gameSpeed = 300;
+let gameSpeed = 500;
 let apple = new Image();
 apple.src = "./Assets/apple3.png";
 let snake = new Image();
@@ -16,6 +18,9 @@ let appleX = 200;
 let appleY = 280;
 
 function canvasSetup() {
+  canvas.width = CANVAS_WIDTH;
+  canvas.height = CANVAS_HEIGHT;
+  snakeBody = [];
   let i = 0;
   for (i = 0; i < SNAKE_START_SEGMENTS; i++) {
     snakeBody.push([snakeStartX, SNAKE_START_Y, GRID_SIZE, GRID_SIZE]);
@@ -24,7 +29,7 @@ function canvasSetup() {
   drawSnake();
   
   ctx.drawImage(apple, appleX, appleY);  
-  ctx.drawImage(snake, snakeBody[0][0] - 40, snakeBody[0][1] - 14);
+  //ctx.drawImage(snake, snakeBody[0][0] - 40, snakeBody[0][1] - 14);
 }
 
 function moveSnake() {
@@ -37,7 +42,9 @@ function moveSnake() {
       snakeBody[lastPiece][2],
       snakeBody[lastPiece][3]
     );
-
+    let test = checkForDuplicates(snakeBody);
+    console.log(snakeBody);
+    console.log(test);
     switch (snakeDirection) {
       case "Up":
         snakeBody.unshift([
@@ -84,6 +91,9 @@ function moveSnake() {
 }
 
 function drawSnake() {
+  canvas.width = CANVAS_WIDTH;
+  canvas.height = CANVAS_HEIGHT;
+  ctx.drawImage(apple, appleX, appleY); 
   ctx.fillStyle = "#ffe500";
   let i = 0;
   for (i = 0; i < snakeBody.length; i++) {
@@ -100,10 +110,18 @@ function drawSnake() {
       ctx.stroke();
     }
   }
-  /*let snakeLength = new Set(snakeBody).size;
-console.log(snakeLength);
-console.log(snakeBody.length);*/
-  ctx.drawImage(snake, snakeBody[0][0] - 40, snakeBody[0][1] - 14);
+
+  if (snakeBody[0][0] < 0 || snakeBody[0][0] >= CANVAS_WIDTH || snakeBody[0][1] < 0 || snakeBody[0][1] >= CANVAS_HEIGHT) {
+    snakeMoving = false;
+    snakeDirection = "";
+    snakeStartX = 500;
+    appleX = 200;
+    appleY = 280;
+    canvasSetup();
+    return;
+}
+
+  //ctx.drawImage(snake, snakeBody[0][0] - 40, snakeBody[0][1] - 14);
   appleEaten();
 }
 
@@ -115,7 +133,15 @@ function appleEaten() {
     gameSpeed = gameSpeed * 0.95;
     clearInterval(refresh);
     refresh = setInterval(moveSnake, gameSpeed);
-    snakeBody.unshift(snakeBody[0]);
+    let secondToLastX = snakeBody[snakeBody.length -2][0];
+    let secondToLastY = snakeBody[snakeBody.length -2][1];
+    let lastX = snakeBody[snakeBody.length -1][0];
+    let lastY = snakeBody[snakeBody.length -1][1];
+    let newPieceX = 0;
+    let newPieceY = 0;
+    newPieceX = lastX - secondToLastX;
+    newPieceY = lastY - secondToLastY;
+    snakeBody.push([lastX + newPieceX, lastY + newPieceY, GRID_SIZE, GRID_SIZE]);
     drawSnake();
   }
 }
@@ -160,3 +186,26 @@ document.addEventListener("keydown", function (event) {
 canvasSetup();
 
 let refresh = setInterval(moveSnake, gameSpeed);
+
+function checkForDuplicates(array) {
+  let valuesAlreadySeen = [];
+
+  for (let i = 0; i < array.length; i++) {
+    let value = array[i]
+    if (valuesAlreadySeen.indexOf(value) !== -1) {
+      return true
+    }
+    valuesAlreadySeen.push(value)
+    console.log(valuesAlreadySeen);
+  }
+  return false
+}
+
+document.getElementById("pause").addEventListener("click", function () {
+  if (snakeMoving) {
+    snakeMoving = false;
+  }
+  else {
+    snakeMoving = true;
+  }
+})
