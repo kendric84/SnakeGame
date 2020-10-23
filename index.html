@@ -7,12 +7,35 @@
     <link href="./style.css" rel="stylesheet" />
   </head>
   <body>
+    <div id="header-div">
+      <img id="apple-count" src="./Assets/apple2.png" />
+      <input id="count" value="0" />
+      <div id="difficulty-div">
+        <label
+          ><input
+            type="radio"
+            id="easy"
+            name="difficulty"
+            value="easy"
+            checked
+          />Easy</label
+        >
+        <label
+          ><input
+            type="radio"
+            id="hard"
+            name="difficulty"
+            value="hard"
+          />Hard</label
+        >
+      </div>
+    </div>
+
     <div id="canvas-div">
       <canvas id="canvas">
-        <img id="apple" src="./Assets/apple3.png"/>
-        <img id="snake" src="./Assets/snake-head2.png"/>
+        <img id="apple" src="./Assets/apple.png" />
+        <img id="snake" src="./Assets/snake-head.png" />
       </canvas>
-      <input type="button" id="pause" value="play/pause"></input>
     </div>
     <script src="./code.js"></script>
   </body>

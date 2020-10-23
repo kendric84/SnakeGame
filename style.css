@@ -1,3 +1,33 @@
+#header-div {
+    width: 500px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    vertical-align: middle;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 8px;
+}
+
+#count {
+    border: 0px;
+    width: 30px;
+    font-family: Candara;
+    font-size: 30px;
+    text-align: center;
+    padding-top: 2px;
+}
+
+#difficulty-div {
+    height: 30px;
+    width: 250px;
+    display: flex;
+    justify-content: center;
+    vertical-align: middle;
+    padding-top: 8px;
+    font-family: Candara;
+}
+
 #canvas-div {
     display: flex;
     justify-content: center;
@@ -8,8 +38,4 @@
 #canvas{
     border: solid 10px #654321;
     background-color: #008000;
-}
-
-#pause {
-    height: 20px;
 }
