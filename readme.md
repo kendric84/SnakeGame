@@ -2,7 +2,7 @@
 
 *A classic Snake game written in pure JavaScript, HTML, and CSS*
 
-Play it [here](https://github.com/kendric84/SnakeGame)
+Play it [here](https://kendric84.github.io/SnakeGame/)
 
 ![App Screenshot](/Assets/SS.png)
 
