@@ -12,4 +12,4 @@ A fun classic Snake game with two difficulty levels that will track the number t
 Don't get too confident though, it gets harder the better you do!
 
 ## Author
-- **Graham Smith** - Full-Stack Software Developer
+- **Graham Smith** - Full-Stack Software Developer - [GrahamS.tech](https://www.grahams.tech)

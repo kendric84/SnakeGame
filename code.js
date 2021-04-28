@@ -22,36 +22,36 @@ let appleY = appleStartY;
 let snakeHeadX = 0;
 let snakeHeadY = 0;
 let snakeHeadRotation = 0;
-let appleCount = 0
+let appleCount = 0;
 
-document.getElementById("easy").addEventListener("click", function (){
-gridSize = 30;
-canvasWidth = 750;
-canvasHeight = 510;
-snakeStartX = 420;
-snakeStartY = 270;
-snakeStartSegments = 5;
-appleStartX = 210;
-appleStartY = 270;
-snakeX = snakeStartX;
-snakeBody = [];
-snakeDirection = "";
-snakeMoving = false;
-gameSpeed = 300;
-apple = new Image();
-apple.src = "./Assets/apple2.png";
-snakeHead = new Image();
-snakeHead.src = "./Assets/snake-head.png";
-appleX = appleStartX;
-appleY = appleStartY;
-snakeHeadX = 0;
-snakeHeadY = 0;
-snakeHeadRotation = 0;
-appleCount = 0
-canvasSetup();
-})
+document.getElementById("easy").addEventListener("click", function () {
+  gridSize = 30;
+  canvasWidth = 750;
+  canvasHeight = 510;
+  snakeStartX = 420;
+  snakeStartY = 270;
+  snakeStartSegments = 5;
+  appleStartX = 210;
+  appleStartY = 270;
+  snakeX = snakeStartX;
+  snakeBody = [];
+  snakeDirection = "";
+  snakeMoving = false;
+  gameSpeed = 300;
+  apple = new Image();
+  apple.src = "./Assets/apple2.png";
+  snakeHead = new Image();
+  snakeHead.src = "./Assets/snake-head.png";
+  appleX = appleStartX;
+  appleY = appleStartY;
+  snakeHeadX = 0;
+  snakeHeadY = 0;
+  snakeHeadRotation = 0;
+  appleCount = 0;
+  canvasDefaultState();
+});
 
-document.getElementById("hard").addEventListener("click", function (){
+document.getElementById("hard").addEventListener("click", function () {
   gridSize = 20;
   canvasWidth = 800;
   canvasHeight = 600;
@@ -74,13 +74,11 @@ document.getElementById("hard").addEventListener("click", function (){
   snakeHeadX = 0;
   snakeHeadY = 0;
   snakeHeadRotation = 0;
-  appleCount = 0
-  canvasSetup();
-})
+  appleCount = 0;
+  canvasDefaultState();
+});
 
-function canvasSetup() {
-  canvas.width = canvasWidth;
-  canvas.height = canvasHeight;
+function initalizeSnake() {
   snakeBody = [];
   let i = 0;
   for (i = 0; i < snakeStartSegments; i++) {
@@ -88,11 +86,57 @@ function canvasSetup() {
     snakeX += gridSize;
   }
   snakeHeadRotation = 0;
-  snakeHeadX = gridSize *-.98;
-  snakeHeadY = gridSize *-.7;
+  snakeHeadX = gridSize * -0.98;
+  snakeHeadY = gridSize * -0.7;
+}
+
+function drawApple() {
+  ctx.drawImage(apple, appleX, appleY);
+}
+
+function canvasDefaultState() {
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  initalizeSnake();
   drawSnake();
   document.getElementById("count").value = appleCount;
-  ctx.drawImage(apple, appleX, appleY);
+  drawApple();
+}
+
+function gameReset() {
+  snakeMoving = false;
+  snakeDirection = "";
+  snakeX = snakeStartX;
+  appleX = appleStartX;
+  appleY = appleStartY;
+  gameSpeed = 250;
+  clearInterval(refresh);
+  refresh = setInterval(gamePlay, gameSpeed);
+  appleCount = 0;
+  canvasDefaultState();
+}
+
+function gamePlay() {
+  if (snakeOverlap() === true) {
+    gameReset();
+    return;
+  }
+  moveSnake();
+}
+
+function snakeOverlap() {
+  let hasDup = false;
+
+    for (let i = 1; i < snakeBody.length; i++) {
+      if (
+        snakeBody[0][0] === snakeBody[i][0] &&
+        snakeBody[0][1] === snakeBody[i][1]
+      ) {
+        hasDup = true;
+      }
+    }
+
+    return hasDup;
 }
 
 function moveSnake() {
@@ -104,29 +148,8 @@ function moveSnake() {
       snakeBody[lastPiece][1],
       snakeBody[lastPiece][2],
       snakeBody[lastPiece][3]
-    );
-
-    let hasDup = false;
-
-    for (let i = 1; i < snakeBody.length; i++) {
-      if (snakeBody[0][0] === snakeBody[i][0] && snakeBody[0][1] === snakeBody[i][1]) {
-        hasDup = true;
-      }
-    }
-
-    if (hasDup === true) {
-      snakeMoving = false;
-      snakeDirection = "";
-      snakeX = snakeStartX;
-      appleX = appleStartX;
-      appleY = appleStartY;
-      gameSpeed = 250;
-      clearInterval(refresh);
-      refresh = setInterval(moveSnake, gameSpeed);
-      appleCount = 0;
-      canvasSetup();
-      return;
-    }
+    );      
+    
     switch (snakeDirection) {
       case "Up":
         snakeBody.unshift([
@@ -175,7 +198,7 @@ function moveSnake() {
 function drawSnake() {
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;
-  ctx.drawImage(apple, appleX, appleY);
+  drawApple();
   ctx.fillStyle = "#ffe500";
   for (let i = 0; i < snakeBody.length; i++) {
     ctx.fillRect(
@@ -185,7 +208,7 @@ function drawSnake() {
       snakeBody[i][3]
     );
     ctx.beginPath();
-    ctx.lineWidth = gridSize/10;
+    ctx.lineWidth = gridSize / 10;
     ctx.strokeStyle = "black";
     ctx.rect(
       snakeBody[i][0],
@@ -198,13 +221,13 @@ function drawSnake() {
 
   //Rotate snake head
   ctx.save();
-  ctx.translate(snakeBody[0][0],snakeBody[0][1]);
+  ctx.translate(snakeBody[0][0], snakeBody[0][1]);
   if (snakeDirection === "Right") {
-    ctx.scale(1, -1)
+    ctx.scale(1, -1);
   }
-  ctx.rotate(snakeHeadRotation * Math.PI / 180);
+  ctx.rotate((snakeHeadRotation * Math.PI) / 180);
   ctx.drawImage(snakeHead, snakeHeadX, snakeHeadY);
-  ctx.translate((snakeBody[0][0])*-1,(snakeBody[0][1])*-1);
+  ctx.translate(snakeBody[0][0] * -1, snakeBody[0][1] * -1);
   ctx.restore();
 
   //Check if snake has hit border
@@ -214,19 +237,8 @@ function drawSnake() {
     snakeBody[0][1] < 0 ||
     snakeBody[0][1] >= canvasHeight
   ) {
-    snakeMoving = false;
-    snakeDirection = "";
-    snakeX = snakeStartX;
-    appleX = appleStartX;
-    appleY = appleStartY;
-    gameSpeed = 250;
-    snakeHeadRotation = 0;
-    snakeHeadX = gridSize *-1;
-    snakeHeadY = gridSize *-.7;
-    clearInterval(refresh);
-    refresh = setInterval(moveSnake, gameSpeed);
-    appleCount = 0;
-    canvasSetup();
+    gameReset();
+    canvasDefaultState();
     return;
   }
 
@@ -234,10 +246,10 @@ function drawSnake() {
   if (snakeBody[0][0] === appleX && snakeBody[0][1] === appleY) {
     appleX = Math.floor(Math.random() * (canvasWidth / gridSize)) * gridSize;
     appleY = Math.floor(Math.random() * (canvasHeight / gridSize)) * gridSize;
-    ctx.drawImage(apple, appleX, appleY);
+    drawApple();
     gameSpeed = gameSpeed * 0.95;
     clearInterval(refresh);
-    refresh = setInterval(moveSnake, gameSpeed);
+    refresh = setInterval(gamePlay, gameSpeed);
     let secondToLastX = snakeBody[snakeBody.length - 2][0];
     let secondToLastY = snakeBody[snakeBody.length - 2][1];
     let lastX = snakeBody[snakeBody.length - 1][0];
@@ -246,13 +258,8 @@ function drawSnake() {
     let newPieceY = 0;
     newPieceX = lastX - secondToLastX;
     newPieceY = lastY - secondToLastY;
-    snakeBody.push([
-      lastX + newPieceX,
-      lastY + newPieceY,
-      gridSize,
-      gridSize,
-    ]);
-    appleCount ++;
+    snakeBody.push([lastX + newPieceX, lastY + newPieceY, gridSize, gridSize]);
+    appleCount++;
     document.getElementById("count").value = appleCount;
   }
 }
@@ -267,8 +274,8 @@ document.addEventListener("keydown", function (event) {
         snakeMoving = true;
         snakeDirection = "Up";
         snakeHeadRotation = 90;
-        snakeHeadX = (gridSize) *-.98;
-        snakeHeadY = (gridSize) *-1.7;
+        snakeHeadX = gridSize * -0.98;
+        snakeHeadY = gridSize * -1.7;
         return;
       }
     case "ArrowRight":
@@ -278,8 +285,8 @@ document.addEventListener("keydown", function (event) {
         snakeMoving = true;
         snakeDirection = "Right";
         snakeHeadRotation = 180;
-        snakeHeadX = gridSize *-2.1;
-        snakeHeadY = gridSize *-.7;
+        snakeHeadX = gridSize * -2.1;
+        snakeHeadY = gridSize * -0.7;
         return;
       }
     case "ArrowDown":
@@ -289,8 +296,8 @@ document.addEventListener("keydown", function (event) {
         snakeMoving = true;
         snakeDirection = "Down";
         snakeHeadRotation = -90;
-        snakeHeadX = gridSize *-2.1;
-        snakeHeadY = gridSize *-.7;
+        snakeHeadX = gridSize * -2.1;
+        snakeHeadY = gridSize * -0.7;
         return;
       }
     case "ArrowLeft":
@@ -300,13 +307,13 @@ document.addEventListener("keydown", function (event) {
         snakeMoving = true;
         snakeDirection = "Left";
         snakeHeadRotation = 0;
-        snakeHeadX = gridSize *-.98;
-        snakeHeadY = gridSize *-.7;
+        snakeHeadX = gridSize * -0.98;
+        snakeHeadY = gridSize * -0.7;
         return;
       }
   }
 });
 
-canvasSetup();
+canvasDefaultState();
 
-let refresh = setInterval(moveSnake, gameSpeed);
+let refresh = setInterval(gamePlay, gameSpeed);
